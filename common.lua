@@ -45,8 +45,8 @@ function Linear_Fit(X,Y)--Y=K*X+R
     return K,R
 end
 
-local function saveStrToFile(filepath, str)--保存文件
-    local file=io.open(filepath,"w")
+function saveStrToFile(filepath, str)--保存文件
+    local file=io.open(filepath,"a")
     file:write(str)
     file:close()
 end

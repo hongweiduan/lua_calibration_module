@@ -1,6 +1,5 @@
 require "test.test"
 
-
 --before
 function get_one_standard_vaule()
 	--DO something
@@ -14,6 +13,9 @@ function get_one_target_vaule()
 	return ret
 end
 
+function cal_init()
+	print("init")
+end
 --after
 -- function get_one_standard_vaule()
 -- 	--DO something
@@ -27,7 +29,7 @@ end
 -- 	return ret
 -- end
 
-function get_step(v)
+function set_step(v)
 	--DO something
 	return true
 end
@@ -37,4 +39,6 @@ function cal_delay(sm)
 	os.execute("sleep "..(sm/1000))
 	return true	
 end
+
+
 

@@ -55,6 +55,8 @@ function loadCsvFile(filePath)
         if not line then  
             break  
         end  
+        local line = string.gsub(line,"\r","")
+        local line = string.gsub(line,"\n","")
         table.insert(alls, line)  
     end  
     --[[ 从第2行开始保存（第一行是标题，后面的行才是内容） 用二维数组保存：arr[ID][属性标题字符串] ]]  
