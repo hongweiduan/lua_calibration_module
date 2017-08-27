@@ -2,7 +2,7 @@ require "common"
 require "config"
 require(interface_name)
 
-
+calibration_module = {}
 function check_path(path)
     f = io.open(path)
     if f == nil then
@@ -44,6 +44,7 @@ local function _cal_(file_Path,Cal_Tab)
     end
 
     local _k,_b = Linear_Fit(tab_target,tab_standard)
+    saveStrToFile(file_Path,board_name.." "..Cal_Tab[1]..step_unit.."~"..Cal_Tab[2]..step_unit.."factor:,".._k..",offset:,".._b.."\n")
     if _k<k_limit[1] or _k>k_limit[2] then result = "--FAIL--".."fac_k is ".._k end
     return _k,_b
 
@@ -52,6 +53,7 @@ end
 
 local function _check_(file_Path,Cal_Tab,factor,offset)
     saveStrToFile(file_Path,"check "..board_name.." "..Cal_Tab[1]..step_unit.."~"..Cal_Tab[2]..step_unit.."\n")
+    saveStrToFile(file_Path,board_name.." "..Cal_Tab[1]..step_unit.."~"..Cal_Tab[2]..step_unit.."factor:,"..factor..",offset:,"..offset.."\n")
 	-- local tab_standard = {}
 	-- local tab_target = {}
 	get_result = "PASS"
@@ -69,7 +71,7 @@ local function _check_(file_Path,Cal_Tab,factor,offset)
         -- table.insert(tab_standard,v_standard)
         -- table.insert(tab_target,v_target)
 
-        local diff = (v_target - v_standard)
+        local diff = (v_target_cal - v_standard)
         local precision = diff/v_standard*1000
         local result_max = v_standard*(1+precision_percent) + precision_deviance
         local result_min = v_standard*(1-precision_percent) - precision_deviance
@@ -85,11 +87,11 @@ local function _check_(file_Path,Cal_Tab,factor,offset)
     return get_result
 end
 
-function save_log_by_station(log_path,name,sn,station_name,id)
+local function save_log_by_station(log_path,name,sn,station_name,id)
     
 end
 
-function save_log_by_board_name(name_str)
+local function save_log_by_board_name(name_str)
     local time_stamp = os.date("%Y-%m-%d_%H_%M_%S", os.time())
     local path_by_board_name = log_path..board_name..'/'
     check_path(path_by_board_name)
@@ -97,21 +99,35 @@ function save_log_by_board_name(name_str)
     os.execute("touch "..csv_by_board_name)
     return csv_by_board_name    
 end
+local function require_config()
+    cfg = readStrFromFile('cal_config')
+    print(cfg)
+    require(tostring(cfg))
+end
 -----------cal test --------
- -- local my_log_path = save_log_by_board_name("cal")
--- saveStrToFile(my_log_path,"Setting Step,Board meas raw data,Instrumental mesa data,Board meas after cal - Instrumental meas, permillage(‰),lower_limit,upper_limit,pass/fail\n")
--- local tab1 = {1,6,1}
--- cal_init()
--- k,b = _cal_(my_log_path,tab1,1,0)
--- print("kkk is "..k..",bbb is "..b)
+function calibration_module.cal_with_head()
+    require_config()
+    local my_log_path = save_log_by_board_name("cal")
+    saveStrToFile(my_log_path,"Setting Step,Board meas raw data,Instrumental mesa data,Board meas after cal - Instrumental meas, permillage(‰),lower_limit,upper_limit,pass/fail\n")
+    local tab1 = {1,6,1}
+    cal_init()
+    k,b = _cal_(my_log_path,tab1,1,0)
+    print("kkk is "..k..",bbb is "..b)
+
+end
+
 
 -----------check test ---------
+function calibration_module.check_with_head()
+    require_config()
+    local my_log_path = save_log_by_board_name("check")
+    saveStrToFile(my_log_path,"Setting Step,Board meas raw data,Board meas data after cal,Instrumental mesa data,Board meas after cal - Instrumental meas, permillage(‰),lower_limit,upper_limit,pass/fail\n")
+    local tab1 = {1,6,1}
+    -- saveStrToFile(my_log_path,"calibration "..board_name.." "..tab1[1]..step_unit.."~"..tab1[2]..step_unit.."\n")
+    cal_init()
+    ret = _check_(my_log_path,tab1,k,b)
+    print("ret is "..ret)
+end
 
-local my_log_path = save_log_by_board_name("check")
-saveStrToFile(my_log_path,"Setting Step,Board meas raw data,Board meas data after cal,Instrumental mesa data,Board meas after cal - Instrumental meas, permillage(‰),lower_limit,upper_limit,pass/fail\n")
-local tab1 = {1,6,1}
--- saveStrToFile(my_log_path,"calibration "..board_name.." "..tab1[1]..step_unit.."~"..tab1[2]..step_unit.."\n")
-cal_init()
-_check_(my_log_path,tab1,1.0001,1.02)
--- print("kkk is "..k..",bbb is "..b)
 
+return calibration_module

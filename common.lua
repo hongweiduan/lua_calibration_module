@@ -51,7 +51,12 @@ function saveStrToFile(filepath, str)--保存文件
     file:close()
 end
 
-local function readStrFromFile(filepath)
+function saveCfgToFile(filepath, str)--保存文件
+    local file=io.open(filepath,"w")
+    file:write(str)
+    file:close()
+end
+function readStrFromFile(filepath)
     local file=io.open(filepath,"r")
     if(file) then
         str = file:read("*a")
