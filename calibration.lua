@@ -1,6 +1,6 @@
 require "common"
 require "config"
-require(interface_name)
+-- require(interface_name)
 
 calibration_module = {}
 function check_path(path)
@@ -13,7 +13,6 @@ function check_path(path)
     return true
 end
 
-check_path(log_path)
 
 local function _cal_(file_Path,Cal_Tab)
     saveStrToFile(file_Path,"calibration "..board_name.." "..Cal_Tab[1]..step_unit.."~"..Cal_Tab[2]..step_unit.."\n")
@@ -45,13 +44,15 @@ local function _cal_(file_Path,Cal_Tab)
 
     local _k,_b = Linear_Fit(tab_target,tab_standard)
     saveStrToFile(file_Path,board_name.." "..Cal_Tab[1]..step_unit.."~"..Cal_Tab[2]..step_unit.."factor:,".._k..",offset:,".._b.."\n")
-    if _k<k_limit[1] or _k>k_limit[2] then result = "--FAIL--".."fac_k is ".._k end
+    if _k<k_limit[1] or _k>k_limit[2] then error("Unacceptable factor: calibration factor is ".._k) end
+    save_coeff(_k,_b)
     return _k,_b
 
 end
 
 
-local function _check_(file_Path,Cal_Tab,factor,offset)
+local function _check_(file_Path,Cal_Tab)
+    factor,offset = read_coeff()
     saveStrToFile(file_Path,"check "..board_name.." "..Cal_Tab[1]..step_unit.."~"..Cal_Tab[2]..step_unit.."\n")
     saveStrToFile(file_Path,board_name.." "..Cal_Tab[1]..step_unit.."~"..Cal_Tab[2]..step_unit.."factor:,"..factor..",offset:,"..offset.."\n")
 	-- local tab_standard = {}
@@ -101,8 +102,9 @@ local function save_log_by_board_name(name_str)
 end
 local function require_config()
     cfg = readStrFromFile('cal_config')
-    print(cfg)
+    -- print(cfg)
     require(tostring(cfg))
+    check_path(log_path)
 end
 -----------cal test --------
 function calibration_module.cal_with_head(tab)
@@ -112,7 +114,8 @@ function calibration_module.cal_with_head(tab)
     -- local tab1 = {1,6,1}
     cal_init()
     k,b = _cal_(my_log_path,tab)
-    print("kkk is "..k..",bbb is "..b)
+    return k,b
+    -- print("kkk is "..k..",bbb is "..b)
 end
 
 function calibration_module.cal_without_head(tab)
@@ -122,7 +125,7 @@ function calibration_module.cal_without_head(tab)
     -- local tab1 = {1,6,1}
     cal_init()
     k,b = _cal_(my_log_path,tab)
-    print("kkk is "..k..",bbb is "..b)
+    -- print("kkk is "..k..",bbb is "..b)
 end
 
 -----------check test ---------
