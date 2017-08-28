@@ -105,29 +105,47 @@ local function require_config()
     require(tostring(cfg))
 end
 -----------cal test --------
-function calibration_module.cal_with_head()
+function calibration_module.cal_with_head(tab)
     require_config()
     local my_log_path = save_log_by_board_name("cal")
     saveStrToFile(my_log_path,"Setting Step,Board meas raw data,Instrumental mesa data,Board meas after cal - Instrumental meas, permillage(‰),lower_limit,upper_limit,pass/fail\n")
-    local tab1 = {1,6,1}
+    -- local tab1 = {1,6,1}
     cal_init()
-    k,b = _cal_(my_log_path,tab1,1,0)
+    k,b = _cal_(my_log_path,tab)
     print("kkk is "..k..",bbb is "..b)
-
 end
 
+function calibration_module.cal_without_head(tab)
+    require_config()
+    local my_log_path = save_log_by_board_name("cal")
+    -- saveStrToFile(my_log_path,"Setting Step,Board meas raw data,Instrumental mesa data,Board meas after cal - Instrumental meas, permillage(‰),lower_limit,upper_limit,pass/fail\n")
+    -- local tab1 = {1,6,1}
+    cal_init()
+    k,b = _cal_(my_log_path,tab)
+    print("kkk is "..k..",bbb is "..b)
+end
 
 -----------check test ---------
-function calibration_module.check_with_head()
+function calibration_module.check_with_head(tab)
     require_config()
     local my_log_path = save_log_by_board_name("check")
     saveStrToFile(my_log_path,"Setting Step,Board meas raw data,Board meas data after cal,Instrumental mesa data,Board meas after cal - Instrumental meas, permillage(‰),lower_limit,upper_limit,pass/fail\n")
-    local tab1 = {1,6,1}
+    -- local tab1 = {1,6,1}
     -- saveStrToFile(my_log_path,"calibration "..board_name.." "..tab1[1]..step_unit.."~"..tab1[2]..step_unit.."\n")
     cal_init()
-    ret = _check_(my_log_path,tab1,k,b)
+    ret = _check_(my_log_path,tab,k,b)
     print("ret is "..ret)
 end
 
+function calibration_module.check_without_head(tab)
+    require_config()
+    local my_log_path = save_log_by_board_name("check")
+    -- saveStrToFile(my_log_path,"Setting Step,Board meas raw data,Board meas data after cal,Instrumental mesa data,Board meas after cal - Instrumental meas, permillage(‰),lower_limit,upper_limit,pass/fail\n")
+    -- local tab1 = {1,6,1}
+    -- saveStrToFile(my_log_path,"calibration "..board_name.." "..tab1[1]..step_unit.."~"..tab1[2]..step_unit.."\n")
+    cal_init()
+    ret = _check_(my_log_path,tab,k,b)
+    print("ret is "..ret)
+end
 
 return calibration_module
