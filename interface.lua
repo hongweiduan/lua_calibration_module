@@ -15,7 +15,7 @@ step_unit								= 'mV'
 meas_unit								= 'mV'
 
 -----------------------------------------------------
-
+print('require the interface')
 --before
 function get_one_standard_vaule()
 	--DO something
