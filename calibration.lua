@@ -44,7 +44,7 @@ local function _cal_(file_Path,Cal_Tab)
     end
 
     local _k,_b = Linear_Fit(tab_target,tab_standard)
-    saveStrToFile(file_Path,board_name.." "..Cal_Tab[1]..step_unit.."~"..Cal_Tab[2]..step_unit.."factor:,".._k..",offset:,".._b.."\n")
+    saveStrToFile(file_Path,board_name.." "..Cal_Tab[1]..step_unit.."~"..Cal_Tab[2]..step_unit.."factor:,"..string.format("%.5f",_k)..",offset:,"..string.format("%.5f",_b).."\n")
     if _k<k_limit[1] or _k>k_limit[2] then error("Unacceptable factor: calibration factor is ".._k) end
     save_coeff(_k,_b)
     return _k,_b
