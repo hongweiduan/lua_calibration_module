@@ -1,7 +1,7 @@
 cal = require("calibration")
 require "common"
 setting_name = "interface"
-saveCfgToFile("cal_config",setting_name)
+saveCfgToFile("/tmp/cal_config",setting_name)
 local tab = {1,6,1}
 cal_coeff_address = '0x01'
 local name_str = "cal"

@@ -154,7 +154,7 @@ local function _cal_(file_Path,Cal_Tab)
     end
 
     local _k,_b = Linear_Fit(tab_target,tab_standard)
-    saveStrToFile(file_Path,board_name.." "..Cal_Tab[1]..step_unit.."~"..Cal_Tab[2]..step_unit.."factor:,"..string.format("%.5f",_k)..",offset:,"..string.format("%.5f",_b).."\n")
+    saveStrToFile(file_Path,board_name.." "..Cal_Tab[1]..step_unit.."~"..Cal_Tab[2]..step_unit.." factor:,"..string.format("%.5f",_k)..",offset:,"..string.format("%.5f",_b).."\n")
     if _k<k_limit[1] or _k>k_limit[2] then error("Unacceptable factor: calibration factor is ".._k) end
     save_coeff(_k,_b)
     return _k,_b
@@ -165,7 +165,7 @@ end
 local function _check_(file_Path,Cal_Tab)
     factor,offset = read_coeff()
     saveStrToFile(file_Path,"check "..board_name.." "..Cal_Tab[1]..step_unit.."~"..Cal_Tab[2]..step_unit.."\n")
-    saveStrToFile(file_Path,board_name.." "..Cal_Tab[1]..step_unit.."~"..Cal_Tab[2]..step_unit.."factor:,"..factor..",offset:,"..offset.."\n")
+    saveStrToFile(file_Path,board_name.." "..Cal_Tab[1]..step_unit.."~"..Cal_Tab[2]..step_unit.." factor:,"..factor..",offset:,"..offset.."\n")
 	-- local tab_standard = {}
 	-- local tab_target = {}
 	get_result = "PASS"
@@ -218,7 +218,7 @@ local function save_log_by_board_name(name_str)
 end
 
 local function require_config()
-    cfg = readStrFromFile('cal_config')
+    cfg = readStrFromFile('/tmp/cal_config')
     -- print(cfg)
     require(tostring(cfg))
     check_path(log_path)
@@ -236,7 +236,7 @@ function calibration_module.cal_with_head(tab,file_name)
     -- local tab1 = {1,6,1}
     cal_init()
     k,b = _cal_(my_log_path,tab)
-    -- print("kkk is "..k..",bbb is "..b)
+    cal_end()
     return k,b
 end
 
@@ -249,9 +249,9 @@ function calibration_module.cal_without_head(tab)
     -- end
     -- saveStrToFile(my_log_path,"Setting Step,Board meas raw data,Instrumental mesa data,Board meas after cal - Instrumental meas, permillage(‰),lower_limit,upper_limit,pass/fail\n")
     -- local tab1 = {1,6,1}
-    -- cal_init()
+    cal_init()
     k,b = _cal_(my_log_path,tab)
-    -- print("kkk is "..k..",bbb is "..b)
+    cal_end()
     return k,b
 end
 
@@ -269,7 +269,7 @@ function calibration_module.check_with_head(tab,file_name)
     -- saveStrToFile(my_log_path,"calibration "..board_name.." "..tab1[1]..step_unit.."~"..tab1[2]..step_unit.."\n")
     cal_init()
     ret = _check_(my_log_path,tab,k,b)
-    print("ret is "..ret)
+    cal_end()
     return ret
 end
 
@@ -283,9 +283,9 @@ function calibration_module.check_without_head()
     -- saveStrToFile(my_log_path,"Setting Step,Board meas raw data,Board meas data after cal,Instrumental mesa data,Board meas after cal - Instrumental meas, permillage(‰),lower_limit,upper_limit,pass/fail\n")
     -- -- local tab1 = {1,6,1}
     -- -- saveStrToFile(my_log_path,"calibration "..board_name.." "..tab1[1]..step_unit.."~"..tab1[2]..step_unit.."\n")
-    -- cal_init()
+    cal_init()
     ret = _check_(my_log_path,tab1,k,b)
-    print("ret is "..ret)
+    cal_end()
     return ret
 end
 
