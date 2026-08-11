@@ -59,8 +59,9 @@ In industrial testing equipment, Lua is commonly used because:
 
 ## 👤 Author
 
-**Howie** — Director of Software R&D @ CYGIA (Changyuan Group, SHA: 600525)
+**Howie** — Founder @ Yaocheng Software · Former Director of Software R&D @ CYGIA
 
+- 🚀 Currently building industrial software + AI agent systems at Yaocheng Software
 - 🏭 10+ years building industrial automation & testing systems
 - ⚙️ Hardware-software integration specialist
 - 💼 [GitHub Profile](https://github.com/hongweiduan)
